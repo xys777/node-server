@@ -1,0 +1,19 @@
+.left{
+    float:left;
+}
+.right{
+    float:right;
+}
+.clear{ clear:both} 
+.clearfix:after { content:"."; display:block; height:0; visibility:hidden; clear:both; } 
+#header:after,#body:after,#footer:after{
+    content:"."; display:block; height:0; visibility:hidden; clear:both;
+}
+
+body{position:relative;width:100%;min-height:100%;} 
+#body{padding-bottom:30px;} 
+#footer{height:30px;bottom:0px;left:0px;} 
+ul{
+    margin:0;
+    padding:0;
+}

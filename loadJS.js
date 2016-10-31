@@ -26,9 +26,15 @@
 
   var
     version = "1.0.0",
+    loadList = [],loading=0,
   // Define a local copy of loadJS
     loadJS = function( ) {
+      
+      
       var d = $.Deferred();
+      d.id=loadList.length
+      loadList.push(d)
+      
       var args = arguments
       console.log(JSON.stringify(args))
       if (arguments.length>0) {
@@ -37,18 +43,31 @@
         var jsArr = Array.isArray(arg) ? arg : [arg]
         var ajaxArr = []
         jsArr.forEach(function (item) {
-          if (item) ajaxArr.push($.getScript(item));
+          if (item){ 
+            ajaxArr.push($.getScript(item));
+          }
         })
         if (ajaxArr.length > 0) {
+          loading++
+          console.log('loading='+loading)
           $.when.apply($, ajaxArr).done(function (arr) {
             //console.log(JSON.stringify(arr))
-            loadJS.apply(null,args).done(d.resolve)
+            loading--
+            console.log('loading='+loading)
+            loadJS.apply(null,args)
           })
         }else{
-          loadJS.apply(null,args).done(d.resolve)
+          loadJS.apply(null,args)
         }
       }else{
-        d.resolve();
+        console.log(JSON.stringify(loadList))
+        if(loading===0)
+        for(var i = loadList.length-1;i>=0;i--){
+          console.log('id='+i+'|state='+loadList[i].state())
+            if(loadList[i].state()==='pending'){
+              loadList[i].resolve()
+            }
+          }
       }
       return d;
     };

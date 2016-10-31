@@ -1,7 +1,8 @@
-console.log('nglogo')
+console.log('loading module ngLogo')
 angular.module('ngLogo', []).directive('ngLogo',function(){
     return{
         restrict: 'AE',
-        templateUrl: 'ngapp/nglogo/template.html',
+        templateUrl: 'ngapp/logo/template.html'
+        
     }
 });
