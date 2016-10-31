@@ -4,9 +4,9 @@
 var http = require('http');
 var fs = require('fs');
 var multiParser = require('./multiParser')
-var hostname=process.env.IP
-var port=process.env.PORT
-http.createServer(function(req, res) {
+var hostname = process.env.IP||'127.0.0.1'
+var port = process.env.PORT||3000
+http.createServer(function (req, res) {
 
   req.on('error', onRequestError);
   res.on('error', onResponseError);
@@ -14,7 +14,8 @@ http.createServer(function(req, res) {
   processRequest(req, res);
 }).listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
-});
+})
+;
 
 function onRequestError(err) {
   console.error(err);
@@ -24,37 +25,53 @@ function onRequestError(err) {
 function onResponseError(err) {
   console.error(err);
 }
-function processRequest(req,res) {
-
-  var file = __dirname+req.url
-  console.log('request is '+file);
+function processRequest(req, res) {
+  req.parsedUrl = parseUrl(req.url)
+  req.baseUrl = req.parsedUrl.baseUrl
+  req.query = req.parsedUrl.params;
+  var file = __dirname + req.baseUrl
+  console.log('request is ' + file);
   fs.exists(file, (exists) => {
     if(exists){
-      readFile(file,req,res)
+      readFile(file, req, res)
     }else{
-      runAction(req,res)
+      runAction(req, res)
     }
-  });
+  }
+)
+  ;
 }
-function readFile(file,req,res) {
-  fs.stat(file, function (err,stat) {
+function parseUrl(url) {
+  var arr = url.split('?'),params=[]
+  if (arr.length>1)
+  params = arr[1].split('&');
+  return{
+    baseUrl:arr[0],
+    params:params
+  }
+}
+function readFile(file, req, res) {
+  fs.stat(file, function (err, stat) {
     if (stat.isFile()) {
       fs.readFile(file, (err, data) => {
         if (err) throw err
         res.end(data)
-      })
+    })
     } else if (stat.isDirectory()) {
-      runAction(req,res)
+      runAction(req, res)
     }
   })
 }
-function runAction(req,res) {
-  switch (req.url){
+function runAction(req, res) {
+  switch (req.url) {
     case '/':
-      index(req,res)
+      index(req, res)
+      break
+    case '/index.js':
+      loadJS(req, res)
       break
     case '/upload':
-      upload(req,res)
+      upload(req, res)
       break
     default:
       pageNotFound(res)
@@ -64,32 +81,40 @@ function pageNotFound(res) {
   res.statusCode = 404;
   res.end('Page Not Found!');
 }
-function index(req,res) {
+
+function loadJS(req, res) {
   fs.readFile('index.html', (err, data) => {
     if (err) throw err
     res.end(data)
 })
 }
-function upload(req,res) {
+function index(req, res) {
+  fs.readFile('index.html', (err, data) => {
+    if (err) throw err
+    res.end(data)
+})
+}
+function upload(req, res) {
   //res.end('uploaded!');
   var body = [];
-  req.on('data', function(chunk) {
+  req.on('data', function (chunk) {
     body.push(chunk);
-  }).on('end', function() {
+  }).on('end', function () {
     body = Buffer.concat(body).toString('binary');
-    if ( req.headers.hasOwnProperty('content-type') ) {
-      var formData = new multiParser(req.headers['content-type'],body);
+    if (req.headers.hasOwnProperty('content-type')) {
+      var formData = new multiParser(req.headers['content-type'], body);
       //console.log(formData);
     }
     //if(formData.fields.length===1){
-      formData.fields.forEach(function (field) {
-        var obj = formData.parts[field];
-        var filename = obj.disposition && obj.disposition.filename;
-        var buffer = new Buffer(obj.body, 'binary');
-        fs.writeFile(filename, buffer, (err) => {
-          if (err) throw err;
-        });
-      })
+    formData.fields.forEach(function (field) {
+      var obj = formData.parts[field];
+      var filename = obj.disposition && obj.disposition.filename;
+      var buffer = new Buffer(obj.body, 'binary');
+      fs.writeFile(filename, buffer, (err) => {
+        if (err) throw err;
+    })
+      ;
+    })
     //}
     res.end();
   });

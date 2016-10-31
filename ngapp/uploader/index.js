@@ -5,7 +5,7 @@ var upload = angular.module('uploader', []);
 upload.directive('ngUpload', ['uploadService','$log', function (uploadService, $log) {
   return {
     restrict: 'AE',
-    templateUrl: 'uploader/template.html',
+    templateUrl: 'ngapp/uploader/template.html',
     link: function ($scope, $elem, $attr, $http) {
       $scope.needToUpload = false;
       $scope.btn_remove = function (file) {
