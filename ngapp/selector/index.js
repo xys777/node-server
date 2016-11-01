@@ -1,7 +1,12 @@
 console.log('loading module ngSelector')
-angular.module('ngSelector', []).directive('ngSelector',function(){
-    return{
-        restrict: 'AE',
-        templateUrl: 'ngapp/selector/template.html',
-    }
-});
+var deps=[
+    './ngapp/selector/specs.js'
+]
+loadJS(deps).done(function () {
+    angular.module('ngSelector', ['ngSpecs']).directive('ngSelector',function(){
+        return{
+            templateUrl: 'ngapp/selector/template.html'
+        }
+    });
+    console.log('loaded module ngSelector');
+})

@@ -63,31 +63,31 @@ function readFile(file, req, res) {
   })
 }
 function runAction(req, res) {
-  switch (req.url) {
-    case '/':
-      index(req, res)
-      break
-    case '/index.js':
-      loadJS(req, res)
-      break
-    case '/upload':
-      upload(req, res)
-      break
-    default:
+
+  if(req.baseUrl==='/'){
+    index(req, res)
+  }else{
+    var urls = req.baseUrl.split('/')
+    try{
+      require(__dirname+'/'+urls[1])(req,res);
+    }catch(e){
       pageNotFound(res)
+    }
   }
+  // switch (req.url) {
+  //   case '/upload':
+  //     upload(req, res)
+  //     break
+  //   case /config/.test(str):
+  //   default:
+  //     pageNotFound(res)
+  // }
 }
-function pageNotFound(res) {
+global.pageNotFound = function pageNotFound(res) {
   res.statusCode = 404;
   res.end('Page Not Found!');
 }
 
-function loadJS(req, res) {
-  fs.readFile('index.html', (err, data) => {
-    if (err) throw err
-    res.end(data)
-})
-}
 function index(req, res) {
   fs.readFile('index.html', (err, data) => {
     if (err) throw err

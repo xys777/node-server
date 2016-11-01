@@ -8,6 +8,6 @@ var deps=[
   './ngapp/user/index.js'
 ]
 loadJS(deps).done(function () {
-  console.log('genarating module header');
   angular.module('ngHeader', ['ngLogo','ngMenu','ngUser']);
+  console.log('loaded module header');
 })

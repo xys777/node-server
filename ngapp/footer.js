@@ -8,6 +8,6 @@ var deps=[
   './ngapp/author/index.js'
 ]
 loadJS(deps).done(function () {
-  console.log('genarating module footer');
   angular.module('ngFooter', ['ngStatus','ngMicrohelp','ngAuthor']);
+  console.log('loaded module footer');
 })

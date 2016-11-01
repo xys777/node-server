@@ -1,7 +1,7 @@
 console.log('loading module ngStatus')
 angular.module('ngStatus', []).directive('ngStatus',function(){
-    return{
-        restrict: 'AE',
-        templateUrl: 'ngapp/status/template.html',
+    return{        
+        templateUrl: 'ngapp/status/template.html'
     }
 });
+console.log('loaded module ngStatus');

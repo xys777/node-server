@@ -1,7 +1,14 @@
 console.log('loading module ngContent')
-angular.module('ngContent', []).directive('ngContent',function(){
-    return{
-        restrict: 'AE',
-        templateUrl: 'ngapp/content/template.html',
-    }
-});
+
+var deps=[
+    './ngapp/content/config.js'
+]
+
+loadJS(deps).done(function () {
+    angular.module('ngContent', ['ngConfig']).directive('ngContent',function(){
+        return{
+            templateUrl: 'ngapp/content/template.html'
+        }
+    });
+    console.log('loaded module ngContent')
+})

@@ -3,8 +3,7 @@
  */
 var upload = angular.module('uploader', []);
 upload.directive('ngUpload', ['uploadService','$log', function (uploadService, $log) {
-  return {
-    restrict: 'AE',
+  return {    
     templateUrl: 'ngapp/uploader/template.html',
     link: function ($scope, $elem, $attr, $http) {
       $scope.needToUpload = false;
